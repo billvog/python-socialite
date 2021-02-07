@@ -8,7 +8,7 @@
 
 </p>
 
-<img src="https://raw.githubusercontent.com/evansmwendwa/python-socialite/feature-docs/banner.png" alt="" />
+<img src="https://raw.githubusercontent.com/evansmwendwa/python-socialite/master/banner.png" alt="" />
 
 ## The easy way to retrieve OAuth 2.0 Tokens from any provider
 
