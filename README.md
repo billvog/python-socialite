@@ -8,28 +8,38 @@
 
 </p>
 
-Simple and convenient oAuth Login user provider for Facebook, Twitter, LinkedIn, Google, GitHub, GitLab and Bitbucket. Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+<img src="https://raw.githubusercontent.com/evansmwendwa/python-socialite/master/banner.png" alt="" />
+
+## The easy way to retrieve OAuth 2.0 Tokens from any provider
+
+Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Twitter, LinkedIn, Google, GitHub, GitLab and Bitbucket. Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
 
 ## Features
 -   Supports multiple common providers
--   Supports any oAuth 2 compliant providers
+-   Supports any oAuth 2 compliant providers (You can provide a custom driver)
 -   Straighforward unopinionated authentication
 -   Can be implemented in any python framework
 
 ## Usage
 
+### Installation
+
+```shell
+pip install python-socialite
+```
+
 ### Generate redirect uri
 ```python
-from python_socialite import AuthProvider
+from python_socialite import OAuthProvider
 
 config = {
     "google": {
         "client_id": "",
         "client_secret": "",
-        "redirect_uri": ""
+        "redirect_url": ""
     }
 }
-provider = AuthProvider("google", config)
+provider = OAuthProvider("google", config)
 redirect_url = provider.get_auth_url()
 
 # redirect user to the redirect_url using your frameworks supported redirect
@@ -38,29 +48,26 @@ redirect_url = provider.get_auth_url()
 ### Retrieving Access Token and User
 
 ```python
-code = "" # read code from GET variables
-provider = AuthProvider("google", config)
+code = "" # read code from GET variables in the url the provider redirected you to
+provider = OAuthProvider("google", config)
 
-try:
-    token = provider.get_token(code)
-    user = provider.get_user(token["access_token"])
-except:
-    pass
+token = provider.get_token(code)
+user = provider.get_user(token["access_token"])
 ```
 
-Hook the returned user profile to your apps authentication.
+This package does not provide opinion on how you use the returned token or user profile. Add that to your application's business logic. Examples include hooking up to your authentication logic, fetching data associated with the returned access token e.t.c
 
 ### Token Template
 
-**NB:** Token attributes might vary between providers. Here's a sample returned by Google
+**NB:** Token attributes might vary between providers. Here's a sample returned by Google oAuth
 
 ```json
 {
-   "access_token":"ya29.***",
-   "expires_in":3599,
-   "scope":"https://www.googleapis.com/auth/userinfo.profile openid",
-   "token_type":"Bearer",
-   "id_token":"***jwt***"
+   "access_token": "ya29.***",
+   "expires_in": 3599,
+   "scope": "https://www.googleapis.com/auth/userinfo.profile openid",
+   "token_type": "Bearer",
+   "id_token": "***jwt***"
 }
 ```
 
@@ -100,7 +107,7 @@ auth_url = provider.set_scopes(["openid", "email", "profile"]).get_auth_url()
 The config must be a dict containing keys of any of the supported providers
 
 ```python
-# each provider key must have client_id, client_secret and redirect_url
+# each provider key must have client_id, client_secret and redirect_url. It's advised to ensure your client_secret is properly secured
 
 config = {
     "google": {

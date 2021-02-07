@@ -108,3 +108,5 @@ test.py
 .nox/
 Notes
 .pypirc
+manual_test.py
+*Zone.Identifier
