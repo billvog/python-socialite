@@ -8,6 +8,8 @@
 
 </p>
 
+<img src="https://raw.githubusercontent.com/evansmwendwa/python-socialite/feature-docs/banner.png" alt="" />
+
 ## The easy way to retrieve OAuth 2.0 Tokens from any provider
 
 Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Twitter, LinkedIn, Google, GitHub, GitLab and Bitbucket. Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
