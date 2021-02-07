@@ -50,10 +50,13 @@ def coverage_upload(session):
 
 @nox.session(python="3.8")
 def lint(session):
+    skip_file = "manual_test.py"
     session.install(*lint_dependencies)
     files = ["tests"] + [str(p) for p in Path(".").glob("*.py")]
-    session.run("black", "--check", *files)
+    if skip_file in files:
+        files.remove(skip_file)
     session.run("flake8", *files)
+    session.run("black", "--check", *files)
     session.run("mypy", "--ignore-missing", *files)
     session.run("python", "setup.py", "check", "--metadata", "--strict")
     if "--skip_manifest_check" in session.posargs:
