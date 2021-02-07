@@ -1,0 +1,24 @@
+from python_socialite.python_socialite import OAuthProvider
+
+config = {
+    "google": {
+        "client_id": "xxxxxxxxxxxxxxxxxxxxxxxxx",
+        "client_secret": "xxxxxxxxxxxxxxxxxxxxxxxx",
+        "redirect_url": "http://localhost"
+    }
+}
+provider = OAuthProvider("google", config)
+redirect_url = provider.get_auth_url()
+print(redirect_url)
+
+# read code from GET variables
+code = "xxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+
+try:
+    token = provider.get_token(code)
+    user = provider.get_user(token["access_token"])
+    print(token)
+    print(" ")
+    print(user)
+except:
+    pass
