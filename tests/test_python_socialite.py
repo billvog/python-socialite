@@ -4,10 +4,17 @@ from unittest.mock import patch
 from python_socialite import python_socialite
 from python_socialite.python_socialite import OAuthProvider
 from python_socialite.drivers.abstract_driver import AbstractDriver
+from python_socialite.exceptions import BadVerification
 
 
 config = {
     "google": {
+        "client_id": "123",
+        "client_secret": "***",
+        "redirect_url": "http://localhost.com",
+        "scopes": ["email", "user"],
+    },
+    "github": {
         "client_id": "123",
         "client_secret": "***",
         "redirect_url": "http://localhost.com",
@@ -58,9 +65,21 @@ def test_python_socialite():
         raise AssertionError
 
 
-def test_get_auth_url():
+def test_google_get_auth_url():
     provider = OAuthProvider("google", config)
-    auth_url = provider.set_scopes(["email", "openid"]).get_auth_url()
+    state = "one"
+    auth_url = provider.set_scopes(["email", "openid"]).get_auth_url(state)
+    parts = list(parse.urlparse(auth_url))
+    query = dict(parse.parse_qsl(parts[4]))
+
+    if query.get("client_id") != "123":
+        raise AssertionError
+
+
+def test_github_get_auth_url():
+    provider = OAuthProvider("github", config)
+    state = "one"
+    auth_url = provider.set_scopes(["email", "openid"]).get_auth_url(state)
     parts = list(parse.urlparse(auth_url))
     query = dict(parse.parse_qsl(parts[4]))
 
@@ -73,8 +92,9 @@ def test_get_token(mock_requests, token):
     mock_requests.post.return_value.ok = True
     mock_requests.post.return_value.json.return_value = token
     code = "__testcode__"
+    state = "one"
     provider = OAuthProvider("google", config)
-    auth_token = provider.get_token(code)
+    auth_token = provider.get_token(code, state)
 
     if auth_token.get("access_token") != "123":
         raise AssertionError
@@ -103,6 +123,40 @@ def test_get_user_google(mock_requests):
     if user.get("email") != "john@example.com":
         raise AssertionError
 
+@patch("python_socialite.drivers.github.requests")
+def test_get_user_github(mock_requests):
+    mock_requests.get.return_value.ok = True
+    mock_requests.get.return_value.json.return_value = {
+        "id": "103",
+        "name": "John Doe",
+        "email": None,
+        "login": "johndoe"
+    }
+    provider = OAuthProvider("github", config)
+    user = provider.get_user("xxxxxx")
+
+    if user.get("provider") != "github":
+        raise AssertionError
+
+    if user.get("id") != "103":
+        raise AssertionError
+
+    if user.get("username") != "johndoe":
+        raise AssertionError
+
+
+@patch("python_socialite.drivers.github.requests")
+def test_get_user_github_error(mock_requests):
+    mock_requests.get.return_value.ok = True
+    mock_requests.get.return_value.json.return_value = {
+        "error": "Bad verification code"
+    }
+    provider = OAuthProvider("github", config)
+    state = "one"
+
+    with pytest.raises(BadVerification):
+        provider.get_token("xxxxxx", state)
+        
 
 def test_set_scopes():
     with pytest.raises(ValueError):
