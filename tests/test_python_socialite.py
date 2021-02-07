@@ -19,7 +19,7 @@ config = {
         "client_secret": "***",
         "redirect_url": "http://localhost.com",
         "scopes": ["email", "user"],
-    }
+    },
 }
 
 
@@ -123,6 +123,7 @@ def test_get_user_google(mock_requests):
     if user.get("email") != "john@example.com":
         raise AssertionError
 
+
 @patch("python_socialite.drivers.github.requests")
 def test_get_user_github(mock_requests):
     mock_requests.get.return_value.ok = True
@@ -130,7 +131,7 @@ def test_get_user_github(mock_requests):
         "id": "103",
         "name": "John Doe",
         "email": None,
-        "login": "johndoe"
+        "login": "johndoe",
     }
     provider = OAuthProvider("github", config)
     user = provider.get_user("xxxxxx")
@@ -156,7 +157,7 @@ def test_get_user_github_error(mock_requests):
 
     with pytest.raises(BadVerification):
         provider.get_token("xxxxxx", state)
-        
+
 
 def test_set_scopes():
     with pytest.raises(ValueError):
