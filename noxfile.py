@@ -52,6 +52,7 @@ def coverage_upload(session):
 def lint(session):
     session.install(*lint_dependencies)
     files = ["tests"] + [str(p) for p in Path(".").glob("*.py")]
+    files.remove("manual_test.py")
     session.run("black", "--check", *files)
     session.run("flake8", *files)
     session.run("mypy", "--ignore-missing", *files)
