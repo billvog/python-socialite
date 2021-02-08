@@ -21,3 +21,11 @@ nox -s lint
 ```shell
 nox -s publish
 ```
+
+### Running all checks at one
+
+Before publishing, run all checks at once
+
+```shell
+nox
+```

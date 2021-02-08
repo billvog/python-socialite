@@ -1,6 +1,7 @@
 """Main module."""
 from python_socialite.drivers.google import GoogleProvider
 from python_socialite.drivers.github import GithubProvider
+from python_socialite.drivers.facebook import FacebookProvider
 
 
 class OAuthProvider:
@@ -13,6 +14,8 @@ class OAuthProvider:
             self.provider = GoogleProvider(credentials)
         elif driver == "github":
             self.provider = GithubProvider(credentials)
+        elif driver == "facebook":
+            self.provider = FacebookProvider(credentials)
         else:
             raise ValueError("Invalid socialite driver")
 
