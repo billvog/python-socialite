@@ -3,18 +3,19 @@ from python_socialite.drivers.abstract_driver import AbstractDriver
 from python_socialite.drivers.abstract_user import abstract_user
 
 
-class GoogleProvider(AbstractDriver):
+class MicrosoftProvider(AbstractDriver):
     def __init__(self, config):
         """Initialize Google provider."""
         super().__init__(config)
+        self.tenant = config.get("tenant", "common")
         self.scopes = config.get("scopes", ["openid", "email", "profile"])
 
     def get_auth_url(self, state=None):
-        url = "https://accounts.google.com/o/oauth2/v2/auth"
+        url = f"https://login.microsoftonline.com/{self.tenant}/oauth2/v2.0/authorize"
         return self.build_url(url, state)
 
     def get_token_url(self):
-        return "https://www.googleapis.com/oauth2/v4/token"
+        return f"https://login.microsoftonline.com/{self.tenant}/oauth2/v2.0/token"
 
     def get_token_fields(self, code, state=None):
         fields = super().get_token_fields(code, state)
@@ -22,7 +23,7 @@ class GoogleProvider(AbstractDriver):
         return fields
 
     def get_user_by_token(self, access_token):
-        url = "https://www.googleapis.com/oauth2/v3/userinfo"
+        url = "https://graph.microsoft.com/v1.0/me"
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get(url, headers=headers)
         response.raise_for_status()
@@ -30,10 +31,10 @@ class GoogleProvider(AbstractDriver):
 
     def map_user_to_dict(self, raw_user):
         user = dict(abstract_user)
-        user["id"] = raw_user.get("sub")
-        user["name"] = raw_user.get("name")
-        user["email"] = raw_user.get("email")
+        user["id"] = raw_user.get("id")
+        user["name"] = raw_user.get("displayName")
+        user["email"] = raw_user.get("userPrincipalName")
         user["avatar"] = raw_user.get("picture")
-        user["provider"] = "google"
+        user["provider"] = "microsoft"
         user["raw"] = raw_user
         return user

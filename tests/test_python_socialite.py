@@ -1,5 +1,4 @@
 import pytest
-from urllib import parse
 from unittest.mock import patch
 from python_socialite import python_socialite
 from python_socialite.python_socialite import OAuthProvider
@@ -8,11 +7,11 @@ from python_socialite.drivers.abstract_driver import AbstractDriver
 
 config = {
     "google": {
-        "client_id": "123",
+        "client_id": "client_id_1",
         "client_secret": "***",
         "redirect_url": "http://localhost.com",
         "scopes": ["email", "user"],
-    }
+    },
 }
 
 
@@ -58,49 +57,19 @@ def test_python_socialite():
         raise AssertionError
 
 
-def test_get_auth_url():
-    provider = OAuthProvider("google", config)
-    auth_url = provider.set_scopes(["email", "openid"]).get_auth_url()
-    parts = list(parse.urlparse(auth_url))
-    query = dict(parse.parse_qsl(parts[4]))
-
-    if query.get("client_id") != "123":
-        raise AssertionError
-
-
 @patch("python_socialite.drivers.abstract_driver.requests")
 def test_get_token(mock_requests, token):
     mock_requests.post.return_value.ok = True
     mock_requests.post.return_value.json.return_value = token
     code = "__testcode__"
+    state = "one"
     provider = OAuthProvider("google", config)
-    auth_token = provider.get_token(code)
+    auth_token = provider.get_token(code, state)
 
     if auth_token.get("access_token") != "123":
         raise AssertionError
 
     if auth_token.get("token_type") != "Bearer":
-        raise AssertionError
-
-
-@patch("python_socialite.drivers.google.requests")
-def test_get_user_google(mock_requests):
-    mock_requests.get.return_value.ok = True
-    mock_requests.get.return_value.json.return_value = {
-        "sub": "103",
-        "name": "John Doe",
-        "email": "john@example.com",
-    }
-    provider = OAuthProvider("google", config)
-    user = provider.get_user("xxxxxx")
-
-    if user.get("provider") != "google":
-        raise AssertionError
-
-    if user.get("id") != "103":
-        raise AssertionError
-
-    if user.get("email") != "john@example.com":
         raise AssertionError
 
 

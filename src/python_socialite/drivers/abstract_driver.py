@@ -1,6 +1,7 @@
 import requests
 from abc import ABCMeta, abstractmethod
 from urllib import parse
+from python_socialite.exceptions import BadVerification
 
 
 class AbstractDriver(metaclass=ABCMeta):
@@ -11,9 +12,11 @@ class AbstractDriver(metaclass=ABCMeta):
         self.redirect_url = config.get("redirect_url")
         self.config = config
         self.scope_separator = " "
+        self.state = None
 
     @abstractmethod
-    def get_auth_url(self):
+    def get_auth_url(self, state=None):
+        self.state = state
         raise NotImplementedError
 
     @abstractmethod
@@ -41,13 +44,16 @@ class AbstractDriver(metaclass=ABCMeta):
 
         return fields
 
-    def get_token_fields(self, code):
+    def get_token_fields(self, code, state=None):
         fields = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
             "redirect_uri": self.redirect_url,
             "code": code,
         }
+
+        if state is not None:
+            fields["state"] = state
 
         return fields
 
@@ -60,12 +66,22 @@ class AbstractDriver(metaclass=ABCMeta):
 
         return parse.urlunparse(parts)
 
-    def get_token(self, code):
+    def get_token(self, code, state=None, type="json"):
         url = self.get_token_url()
-        data = self.get_token_fields(code)
-        response = requests.post(url, json=data)
-        response.raise_for_status()
-        return response.json()
+        data = self.get_token_fields(code, state)
+
+        if type == "json":
+            headers = {"Accept": "application/json"}
+            response = requests.post(url, json=data, headers=headers)
+        else:
+            # microsoft has problem with json request
+            response = requests.post(url, data)
+
+        token = response.json()
+        error = token.get("error")
+        if error:
+            raise BadVerification(response.text)
+        return token
 
     @abstractmethod
     def get_user_by_token(self, access_token):
