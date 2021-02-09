@@ -58,6 +58,7 @@ def test_get_user(mock_requests):
     if user.get("email") != "john@example.com":
         raise AssertionError
 
+
 @patch("python_socialite.drivers.github.requests")
 def test_get_token_error(mock_requests):
     mock_requests.get.return_value.ok = True
