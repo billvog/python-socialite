@@ -12,7 +12,7 @@
 
 ## The easy way to retrieve OAuth 2.0 Tokens from any provider
 
-Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Twitter, LinkedIn, Google, GitHub, GitLab and Bitbucket. Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Google, GitHub, Microsoft and more coming... Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
 
 ## Features
 -   Supports multiple common providers
@@ -37,9 +37,22 @@ config = {
         "client_id": "",
         "client_secret": "",
         "redirect_url": ""
+    },
+    "microsoft": {
+        "client_id": "",
+        "client_secret": "",
+        "redirect_url": "",
+        "tenant": "common",
+        "scopes": ["email", "user"],
     }
 }
+
+# Authorize Google
 provider = OAuthProvider("google", config)
+redirect_url = provider.get_auth_url()
+
+# Authorize Microsoft
+provider = OAuthProvider("microsoft", config)
 redirect_url = provider.get_auth_url()
 
 # redirect user to the redirect_url using your frameworks supported redirect
@@ -48,7 +61,7 @@ redirect_url = provider.get_auth_url()
 ### Retrieving Access Token and User
 
 ```python
-code = "" # read code from GET variables in the url the provider redirected you to
+code = "" # OAuth provider will redirect back to your redirect_url with a code in the url
 provider = OAuthProvider("google", config)
 
 token = provider.get_token(code)
@@ -117,11 +130,15 @@ config = {
         "scopes": [] # optional
     },
     "facebook": {},
-    "twitter": {},
-    "linkedin": {},
     "github": {},
-    "gitlab": {},
-    "bitbucket": {}
+    "microsoft": {},
 }
 
 ```
+
+### Points to note
+
+-   Facebook now requires an access token to load user profile picture. If token is not supplied a placeholder will be returned.
+-   Github does not always return users emails depending on user's privacy settings. In that case an `@users.noreply.github.com` email will be returned.
+-   Microsoft does not return a picture in the users profile. You can use the returned access token to fetch one from Microsoft Open Graph
+- Support for adding a custom driver to any OAuth provider of your choice is planned. If you urgently need this open an issue

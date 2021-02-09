@@ -41,19 +41,23 @@ class FacebookProvider(AbstractDriver):
         parts[4] = parse.urlencode(query, quote_via=parse.quote)
         return parse.urlunparse(parts)
 
-    def get_token(self, code, state=None):
+    def get_token(self, code, state=None, type="json"):
         url = self.build_token_url(code, state)
-        headers = {'Accept': 'application/json'}
+        headers = {}
+        if type == "json":
+            headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers)
         token = response.json()
-        error = token.get('error')
+        error = token.get("error")
         if error:
             raise BadVerification(response.text)
         return token
 
     def map_user_to_dict(self, raw_user):
         user_id = raw_user.get("id")
-        avatar_url = f"https://graph.facebook.com/v9.0/{user_id}/picture/?type=large&width=1600"
+        avatar_url = (
+            f"https://graph.facebook.com/v9.0/{user_id}/picture/?type=large&width=1600"
+        )
         user = dict(abstract_user)
         user["id"] = user_id
         user["name"] = raw_user.get("name")
