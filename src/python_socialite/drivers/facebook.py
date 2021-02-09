@@ -41,9 +41,11 @@ class FacebookProvider(AbstractDriver):
         parts[4] = parse.urlencode(query, quote_via=parse.quote)
         return parse.urlunparse(parts)
 
-    def get_token(self, code, state=None):
+    def get_token(self, code, state=None, type="json"):
         url = self.build_token_url(code, state)
-        headers = {"Accept": "application/json"}
+        headers = {}
+        if type == "json":
+            headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers)
         token = response.json()
         error = token.get("error")
