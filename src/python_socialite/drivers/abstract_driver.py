@@ -66,13 +66,19 @@ class AbstractDriver(metaclass=ABCMeta):
 
         return parse.urlunparse(parts)
 
-    def get_token(self, code, state=None):
+    def get_token(self, code, state=None, type="json"):
         url = self.get_token_url()
         data = self.get_token_fields(code, state)
-        headers = {'Accept': 'application/json'}
-        response = requests.post(url, json=data, headers=headers)
+
+        if type == "json":
+            headers = {"Accept": "application/json"}
+            response = requests.post(url, json=data, headers=headers)
+        else:
+            # microsoft has problem with json request
+            response = requests.post(url, data)
+
         token = response.json()
-        error = token.get('error')
+        error = token.get("error")
         if error:
             raise BadVerification(response.text)
         return token
