@@ -33,7 +33,7 @@ class BitbucketProvider(AbstractDriver):
 
         return fields
 
-    def get_token(self, code, state=None, type="json"):
+    def get_token(self, code, state=None, request_type="json"):
         url = self.get_token_url()
         data = self.get_token_fields(code, state)
         response = requests.post(url, data, auth=(self.client_id, self.client_secret))

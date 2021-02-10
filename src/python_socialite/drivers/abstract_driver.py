@@ -66,11 +66,11 @@ class AbstractDriver(metaclass=ABCMeta):
 
         return parse.urlunparse(parts)
 
-    def get_token(self, code, state=None, type="json"):
+    def get_token(self, code, state=None, request_type="json"):
         url = self.get_token_url()
         data = self.get_token_fields(code, state)
 
-        if type == "json":
+        if request_type == "json":
             headers = {"Accept": "application/json"}
             response = requests.post(url, json=data, headers=headers)
         else:
