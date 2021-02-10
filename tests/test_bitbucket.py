@@ -5,7 +5,7 @@ from python_socialite.python_socialite import OAuthProvider
 from python_socialite.exceptions import BadVerification
 
 config = {
-    "microsoft": {
+    "bitbucket": {
         "client_id": "client_id_1",
         "client_secret": "***",
         "redirect_url": "http://localhost.com",
@@ -28,7 +28,7 @@ def token():
 
 
 def test_get_auth_url():
-    provider = OAuthProvider("microsoft", config)
+    provider = OAuthProvider("bitbucket", config)
     state = "one"
     auth_url = provider.set_scopes(["email", "openid"]).get_auth_url(state)
     parts = list(parse.urlparse(auth_url))
@@ -38,18 +38,39 @@ def test_get_auth_url():
         raise AssertionError
 
 
-@patch("python_socialite.drivers.microsoft.requests")
+@patch("python_socialite.drivers.bitbucket.requests")
+def test_get_token(mock_requests):
+    mock_requests.post.return_value.ok = True
+    mock_requests.post.return_value.json.return_value = {
+        "access_token": "xb56ksf",
+    }
+    provider = OAuthProvider("bitbucket", config)
+    code = "one"
+    state = "user_state"
+    token = provider.get_token(code, state)
+
+    if token.get("access_token") != "xb56ksf":
+        raise AssertionError
+
+
+@patch("python_socialite.drivers.bitbucket.requests")
 def test_get_user(mock_requests):
     mock_requests.get.return_value.ok = True
     mock_requests.get.return_value.json.return_value = {
-        "id": "xb56ksf",
+        "account_id": "xb56ksf",
         "name": "John Doe",
-        "userPrincipalName": "john@example.com",
+        "values": [
+            {
+                "is_primary": True,
+                "type": "email",
+                "email": "john@example.com",
+            },
+        ],
     }
-    provider = OAuthProvider("microsoft", config)
+    provider = OAuthProvider("bitbucket", config)
     user = provider.get_user("xxxxxx")
 
-    if user.get("provider") != "microsoft":
+    if user.get("provider") != "bitbucket":
         raise AssertionError
 
     if user.get("id") != "xb56ksf":
@@ -59,13 +80,13 @@ def test_get_user(mock_requests):
         raise AssertionError
 
 
-@patch("python_socialite.drivers.microsoft.requests")
+@patch("python_socialite.drivers.bitbucket.requests")
 def test_get_token_error(mock_requests):
     mock_requests.get.return_value.ok = True
     mock_requests.get.return_value.json.return_value = {
         "error": "Bad verification code"
     }
-    provider = OAuthProvider("microsoft", config)
+    provider = OAuthProvider("bitbucket", config)
     state = "one"
 
     with pytest.raises(BadVerification):
