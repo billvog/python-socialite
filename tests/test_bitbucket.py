@@ -65,7 +65,7 @@ def test_get_user(mock_requests):
                 "type": "email",
                 "email": "john@example.com",
             },
-        ]
+        ],
     }
     provider = OAuthProvider("bitbucket", config)
     user = provider.get_user("xxxxxx")

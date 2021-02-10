@@ -1,4 +1,3 @@
-import requests
 from python_socialite.drivers.abstract_driver import AbstractDriver
 from python_socialite.drivers.abstract_user import abstract_user
 from python_socialite.python_socialite import OAuthProvider
