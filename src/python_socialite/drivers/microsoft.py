@@ -28,9 +28,9 @@ class MicrosoftProvider(AbstractDriver):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         return response.json()
-    
-    def get_token(self, code, state=None, type="json"):
-        return super().get_token(code, state, type="form-data")
+
+    def get_token(self, code, state=None, request_type="json"):
+        return super().get_token(code, state, request_type="form-data")
 
     def map_user_to_dict(self, raw_user):
         user = dict(abstract_user)

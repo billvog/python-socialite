@@ -24,12 +24,12 @@ This package handles all required boilerplate code for implementing OAuth based 
 
 ## Out of the box OAuth 2.0 Social Login Providers
 
-- Login with Facebook
-- Login with Google
-- Login with Microfost
-- Login with Github
-- Login with Bitbucket
-- Any custom OAuth 2.0 driver
+-   Login with Facebook
+-   Login with Google
+-   Login with Microfost
+-   Login with Github
+-   Login with Bitbucket
+-   Any custom OAuth 2.0 driver
 
 ## Usage
 
