@@ -12,13 +12,24 @@
 
 ## The easy way to retrieve OAuth 2.0 Tokens from any provider
 
-Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Google, GitHub, Microsoft and more coming... Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Google, GitHub, Microsoft, Bitbucket and more coming... Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+
+This package handles all required boilerplate code for implementing OAuth based social authentication in Python and allows you to integrate OAuth login easily in any app built with Python irrespective of your python framework or platform.
 
 ## Features
 -   Supports multiple common providers
 -   Supports any oAuth 2 compliant providers (You can provide a custom driver)
 -   Straighforward unopinionated authentication
 -   Can be implemented in any python framework
+
+## Out of the box OAuth 2.0 Social Login Providers
+
+- Login with Facebook
+- Login with Google
+- Login with Microfost
+- Login with Github
+- Login with Bitbucket
+- Any custom OAuth 2.0 driver
 
 ## Usage
 
@@ -141,4 +152,48 @@ config = {
 -   Facebook now requires an access token to load user profile picture. If token is not supplied a placeholder will be returned.
 -   Github does not always return users emails depending on user's privacy settings. In that case an `@users.noreply.github.com` email will be returned.
 -   Microsoft does not return a picture in the users profile. You can use the returned access token to fetch one from Microsoft Open Graph
-- Support for adding a custom driver to any OAuth provider of your choice is planned. If you urgently need this open an issue
+-   Support for adding a custom driver to any OAuth provider of your choice is planned. If you urgently need this open an issue
+-   The Bitbucket driver will make two calls in order to fetch the user's email addresses
+-   The Bitbucket driver does not fetch the user's profile pic
+
+<hr/>
+
+## Building custom OAuth 2.0 login driver in python
+
+You can build your own custom OAuth 2.0 driver for any of your preferred services by extending `AbstractDriver`
+
+**TIP:** copy code from one of the other drivers on the src directory and modify where necessary
+
+```python
+from python_socialite.drivers.abstract_driver import AbstractDriver
+
+
+class AcmeProvider(AbstractDriver):
+    def __init__(self, config):
+        """Initialize Acme provider."""
+        super().__init__(config)
+        self.scopes = config.get("scopes", ["account", "email"])
+
+    @staticmethod
+    def provider_name():
+        return "acme" # config key
+```
+Have a look at the exiting drivers for methods that you must implment
+
+### Calling your custom driver
+
+Create your config
+
+```python
+config = {
+    "acme": {
+        "client_id": "xxxxxxxxxxxxxxxx",
+        "client_secret": "xxxxxxxxxxxx",
+        "redirect_url": "http://localhost"
+    },
+}
+
+provider = OAuthProvider(AcmeProvider, config)
+```
+
+**NB:** Call all other methods as ussual
