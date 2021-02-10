@@ -23,8 +23,8 @@ class TestDriver(AbstractDriver):
         super().__init__(config)
         self.scopes = config.get("scopes", ["openid", "email", "profile"])
 
-    def get_auth_url(self):
-        super().get_auth_url()
+    def get_auth_url(self, state=None):
+        super().get_auth_url(state=state)
 
     def get_token_url(self):
         super().get_token_url()

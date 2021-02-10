@@ -28,7 +28,6 @@ Released: 2021-02-07
 -   Cleanup docs
 -   Fix google login
 
-
 Version 0.1.3
 -------------
 Released: 2020-05-10
