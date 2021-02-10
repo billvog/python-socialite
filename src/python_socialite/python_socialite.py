@@ -40,8 +40,8 @@ class OAuthProvider:
     def get_auth_url(self, state=None):
         return self.provider.get_auth_url(state)
 
-    def get_token(self, code, state=None, type="json"):
-        return self.provider.get_token(code, state, type)
+    def get_token(self, code, state=None):
+        return self.provider.get_token(code, state)
 
     def get_user(self, access_token):
         return self.provider.get_user(access_token)

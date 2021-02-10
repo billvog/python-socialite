@@ -69,4 +69,4 @@ def test_get_token_error(mock_requests):
     state = "one"
 
     with pytest.raises(BadVerification):
-        provider.get_token("xxxxxx", state, type="form-data")
+        provider.get_token("xxxxxx", state)
