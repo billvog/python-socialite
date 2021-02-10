@@ -141,4 +141,48 @@ config = {
 -   Facebook now requires an access token to load user profile picture. If token is not supplied a placeholder will be returned.
 -   Github does not always return users emails depending on user's privacy settings. In that case an `@users.noreply.github.com` email will be returned.
 -   Microsoft does not return a picture in the users profile. You can use the returned access token to fetch one from Microsoft Open Graph
-- Support for adding a custom driver to any OAuth provider of your choice is planned. If you urgently need this open an issue
+-   Support for adding a custom driver to any OAuth provider of your choice is planned. If you urgently need this open an issue
+-   The Bitbucket driver will make two calls in order to fetch the user's email addresses
+-   The Bitbucket driver does not fetch the user's profile pic
+
+<hr/>
+
+## Building your own custom driver
+
+You can build your own custom OAuth 2.0 driver for any of your preferred services by extending `AbstractDriver`
+
+**TIP:** copy code from one of the other drivers on the src directory and modify where necessary
+
+```python
+from python_socialite.drivers.abstract_driver import AbstractDriver
+
+
+class AcmeProvider(AbstractDriver):
+    def __init__(self, config):
+        """Initialize Acme provider."""
+        super().__init__(config)
+        self.scopes = config.get("scopes", ["account", "email"])
+
+    @staticmethod
+    def provider_name():
+        return "acme" # config key
+```
+Have a look at the exiting drivers for methods that you must implment
+
+### Calling your custom driver
+
+Create your config
+
+```python
+config = {
+    "acme": {
+        "client_id": "xxxxxxxxxxxxxxxx",
+        "client_secret": "xxxxxxxxxxxx",
+        "redirect_url": "http://localhost"
+    },
+}
+
+provider = OAuthProvider(AcmeProvider, config)
+```
+
+**NB:** Call all other methods as ussual
