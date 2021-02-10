@@ -12,13 +12,24 @@
 
 ## The easy way to retrieve OAuth 2.0 Tokens from any provider
 
-Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Google, GitHub, Microsoft and more coming... Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+Simple and convenient way for fetching OAuth 2.0 tokens from any provider. Out of the box support for Facebook, Google, GitHub, Microsoft, Bitbucket and more coming... Inspired by [Laravel Socialite](https://laravel.com/docs/master/socialite)
+
+This package handles all required boilerplate code for implementing OAuth based social authentication in Python and allows you to integrate OAuth login easily in any app built with Python irrespective of your python framework or platform.
 
 ## Features
 -   Supports multiple common providers
 -   Supports any oAuth 2 compliant providers (You can provide a custom driver)
 -   Straighforward unopinionated authentication
 -   Can be implemented in any python framework
+
+## Out of the box OAuth 2.0 Social Login Providers
+
+- Login with Facebook
+- Login with Google
+- Login with Microfost
+- Login with Github
+- Login with Bitbucket
+- Any custom OAuth 2.0 driver
 
 ## Usage
 
