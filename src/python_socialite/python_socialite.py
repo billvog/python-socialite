@@ -5,6 +5,7 @@ from python_socialite.drivers.google import GoogleProvider
 from python_socialite.drivers.github import GithubProvider
 from python_socialite.drivers.facebook import FacebookProvider
 from python_socialite.drivers.microsoft import MicrosoftProvider
+from python_socialite.drivers.bitbucket import BitbucketProvider
 
 
 class OAuthProvider:
@@ -27,7 +28,8 @@ class OAuthProvider:
                 self.provider = FacebookProvider(credentials)
             elif driver == "microsoft":
                 self.provider = MicrosoftProvider(credentials)
-
+            elif driver == "bitbucket":
+                self.provider = BitbucketProvider(credentials)
         if self.provider is None:
             raise ValueError("Invalid socialite driver")
 
