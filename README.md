@@ -158,7 +158,7 @@ config = {
 
 <hr/>
 
-## Building your own custom driver
+## Building custom OAuth 2.0 login driver in python
 
 You can build your own custom OAuth 2.0 driver for any of your preferred services by extending `AbstractDriver`
 
