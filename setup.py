@@ -43,9 +43,7 @@ setup(
     keywords="python_socialite",
     name="python_socialite",
     package_dir={"": "src"},
-    packages=find_packages(
-        include=["src/python_socialite", "src/python_socialite.*"]
-    ),
+    packages=find_packages('src'),
     setup_requires=[],
     url="https://github.com/evansmwendwa/python-socialite",
     version=get_version("src/python_socialite/__init__.py"),
